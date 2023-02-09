@@ -62,11 +62,12 @@ public class KafkaConfiguration {
            return new DefaultKafkaConsumerFactory<>(consumerProperties());
     }
 
-    @Bean
+    @Bean(name="listenerContainerFactory")
     //listener
     public ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory(){
         ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
         listenerContainerFactory.setConsumerFactory(consumerFactory());
+        listenerContainerFactory.setBatchListener(true); //para batch
            return listenerContainerFactory;
     }
 
