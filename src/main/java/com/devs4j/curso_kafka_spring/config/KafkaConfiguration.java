@@ -68,6 +68,7 @@ public class KafkaConfiguration {
         ConcurrentKafkaListenerContainerFactory<String, String> listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
         listenerContainerFactory.setConsumerFactory(consumerFactory());
         listenerContainerFactory.setBatchListener(true); //para batch
+        listenerContainerFactory.setConcurrency(3); //tan solo con esta linea definimos 3 consumers (o sea 3 threads). Por ello en los logs van a salir [ntainer#0-0-C-1] , [ntainer#0-1-C-1] , [ntainer#0-2-C-1]
            return listenerContainerFactory;
     }
 

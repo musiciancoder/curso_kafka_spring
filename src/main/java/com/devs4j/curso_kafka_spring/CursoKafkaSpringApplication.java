@@ -44,7 +44,7 @@ public class CursoKafkaSpringApplication implements CommandLineRunner {
 	properties = {"max.poll.interval.ms:4000",//los batch cada 4 segundos
 	"max.poll.records:10"})//los batch de 10 en 10
      public void listen //este metodo va a recibir mensajes de kafka
-		(List<ConsumerRecord<String,String>> messages){   //al principio recibia una lista de string como argumento...pero en seccion Accediendo a la información completa del mensaje cambio a ConsumerRecord
+		(List<ConsumerRecord<String,String>> messages){   //al principio recibia una lista de string como argumento...pero en seccion Accediendo a la información completa del mensaje (para mostrar particion, offset, key y value) cambio a ConsumerRecord
 		log.info("Start reading messages");
 		for (ConsumerRecord<String,String>msg:messages) {
 			log.info("Partition= {}, Offset={}, Key={}, Value= {}", msg.partition(), msg.offset(), msg.key(), msg.value());
