@@ -1,5 +1,6 @@
 package com.devs4j.curso_kafka_spring;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,11 @@ public class CursoKafkaSpringApplication implements CommandLineRunner {
 			groupId = "devs4j-group",
 	properties = {"max.poll.interval.ms:4000",//los batch cada 4 segundos
 	"max.poll.records:10"})//los batch de 10 en 10
-     public void listen(List<String> message){ //este metodo va a recibir mensajes de kafka
+     public void listen //este metodo va a recibir mensajes de kafka
+		(List<ConsumerRecord<String,String>> messages){   //al principio recibia una lista de string como argumento...pero en seccion Accediendo a la información completa del mensaje cambio a ConsumerRecord
 		log.info("Start reading messages");
-		for (String msg:message
-			 ) {
-			log.info("Message received {}", msg);
+		for (ConsumerRecord<String,String>msg:messages) {
+			log.info("Partition= {}, Offset={}, Key={}, Value= {}", msg.partition(), msg.offset(), msg.key(), msg.value());
 		}
 		log.info("Batch complete");
 	}
@@ -85,7 +86,7 @@ public class CursoKafkaSpringApplication implements CommandLineRunner {
 
 		//Codigo con batch (ni sincrono ni asincrono)
 		for (int i = 0; i < 100; i++) {
-			kafkaTemplate.send("devs4j-topic",String.format("Sample message %d", i));
+			kafkaTemplate.send("devs4j-topic",String.valueOf(i),String.format("Sample message %d", i));
 		}
 
 	}

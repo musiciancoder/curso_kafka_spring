@@ -28,7 +28,7 @@ public class KafkaConfiguration {
                     "localhost:9092");
 
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                    IntegerSerializer.class);
+                    StringSerializer.class);
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                     StringSerializer.class);
             return props;
