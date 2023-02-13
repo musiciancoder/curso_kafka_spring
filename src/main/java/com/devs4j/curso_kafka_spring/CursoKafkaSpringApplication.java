@@ -1,5 +1,6 @@
 package com.devs4j.curso_kafka_spring;
 
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -91,8 +92,15 @@ public class CursoKafkaSpringApplication {
     //Acceso a métricas
     @Scheduled(fixedDelay = 2000, initialDelay = 500)
     public void printMetrics() {
+        //Esto es para ver todas las metricas disponibles
+        List<Meter> metrics=meterRegistry.getMeters();
+        for(Meter meter:metrics) {
+            log.info("Metric {} ",meter.getId().getName());
+        }
+
+        //Metrica count q cuenta de cuantos mensajes se han entregado
         double count = meterRegistry.get("kafka.producer.record.send.total").functionCounter().count();
-        log.info("Count {} ", count); //cuenta de cuantos mensajes se han entregado
+        log.info("Count {} ", count);
 
     }
 
