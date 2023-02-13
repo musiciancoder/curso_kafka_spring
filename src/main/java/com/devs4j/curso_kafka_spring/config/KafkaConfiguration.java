@@ -1,5 +1,8 @@
 package com.devs4j.curso_kafka_spring.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.IntegerDeserializer;
@@ -11,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.*;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 
 @Configuration
+@EnableScheduling //anotacion de spring que permite realizar algo cada cierto tiempo
 public class KafkaConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConfiguration.class);
@@ -44,7 +46,8 @@ public class KafkaConfiguration {
         @Bean
         public KafkaTemplate<String, String> kafkaTemplate(){
            DefaultKafkaProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory<>(producerProperties());
-            KafkaTemplate<String, String> template = new KafkaTemplate<>(producerFactory);
+           producerFactory.addListener(new MicrometerProducerListener<String, String>(meterRegistry())); //Métricas utilizando Micrometer
+           KafkaTemplate<String, String> template = new KafkaTemplate<>(producerFactory);
             return template;
         }
 
@@ -78,6 +81,13 @@ public class KafkaConfiguration {
         listenerContainerFactory.setBatchListener(true); //para batch
         listenerContainerFactory.setConcurrency(3); //tan solo con esta linea definimos 3 consumers (o sea 3 threads). Por ello en los logs van a salir [ntainer#0-0-C-1] , [ntainer#0-1-C-1] , [ntainer#0-2-C-1]
            return listenerContainerFactory;
+    }
+
+    //Métricas utilizando Micrometer
+    @Bean
+    public MeterRegistry meterRegistry(){
+        PrometheusMeterRegistry meterRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+        return meterRegistry;
     }
 
 

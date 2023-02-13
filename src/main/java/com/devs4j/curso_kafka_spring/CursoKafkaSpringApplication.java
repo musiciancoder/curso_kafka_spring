@@ -13,6 +13,7 @@ import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.KafkaSendCallback;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.List;
@@ -24,9 +25,15 @@ public class CursoKafkaSpringApplication implements CommandLineRunner {
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate; //guardado con @Bean en clase KafkaConfiguration
 
+	/*
 	@Autowired
 	private KafkaListenerEndpointRegistry registry; //Lo agregó en seccion "Pausando y reanudando consumo de mensajes"
+*/
 
+	@Scheduled(fixedDelay = 1000, initialDelay = 500) //cada cierto tiempo se ejecuta esto. Se usa en combinacion con @EnableScheduling
+	public void print(){
+		log.info("Devs4j rocks!");
+	}
 
 	private static final Logger log = LoggerFactory.getLogger(CursoKafkaSpringApplication.class);
 
@@ -93,16 +100,20 @@ public class CursoKafkaSpringApplication implements CommandLineRunner {
 	});*/
 
 		//Codigo con batch (ni sincrono ni asincrono)
+		/*
 		for (int i = 0; i < 100; i++) {
 			kafkaTemplate.send("devs4j-topic",String.valueOf(i),String.format("Sample message %d", i));
 		}
 		//código agregado en sección Pausando y reanudando el consumo de mensajes
+		/*
+		 */
+		/*
 		log.info("Waiting to start");
 		Thread.sleep(5000);
 		log.info("starting...");
 		registry.getListenerContainer("devs4jId").start(); //partir automaticamente consumer luego de 5 segundos (ojo, solo para la primera vez, no para reiniciar!)
 		Thread.sleep(5000);
 		registry.getListenerContainer("devs4jId").stop(); //parar automaticamente consumer luego de 5 sefundos
-
+*/
 	}
 }
